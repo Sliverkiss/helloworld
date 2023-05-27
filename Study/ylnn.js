@@ -1,519 +1,671 @@
 /*
-@随缘撸豆
-   伊利牛奶小程序          cron 45 12 * * *  https://raw.githubusercontent.com/liuqi6968/-/main/ylnn.js
-   
-  地址:  #小程序://伊利/1jrunQEW7zfybgI
+ * @Author: Sliverkiss
+ * @Date: 2023-05-27 20:26:28
+ * @FilePath: https://github.com/Sliverkiss/helloworld/master/Study/ylnn.js
+ * @Description:
+ * 伊利牛奶小程序 积分可以兑换实物 
+ * 抓取 https://msmarket.msx.digitalyili.com  中的access-token,填写到stl_cookie中，多账号用#号连接
+ * 
+ * 只用过loon，理论上支持qx、surge，请自行尝试
+ * 
+ */
 
-5.27      完成签到
+const $ = new Env("伊利牛奶小程序");
+//环境变量名字
+const env_name = "ylnn_cookie";
+const env = $.getdata(env_name)
 
-------------------------  青龙--配置文件-贴心复制区域  ---------------------- 
-# 伊利牛奶 小程序 
-#小程序://伊利/1jrunQEW7zfybgI
-抓取 https://msmarket.msx.digitalyili.com  中的access-token
-export ylnn="  access-token " 
-多账号用 换行 或 @ 分割
-注意脚本运行以后 在登录小程序ck会失效
+//通知相关
+var message = "";
 
-
-这个就是以前畅意100 以前玩过的可以找客服把积分移过到这个小程序里面
-*/
-
-const $ = new Env("伊利牛奶")
-const CK_NAME = "ylnn"
-const Notify = 1         // 通知控制
-const tgLogFlag = 1      // 是否tg发送通知, 偷撸车使用, 默认0--不发送
-let msg = '' 
-//===========================================================================
-
-//===========================================================================
-//
-async function main(userInfo) {
-
-    await userInfo.sign()
-   await userInfo.point()
-
-
-
-}
-
-
-class UserInfo {
-    constructor(index, str) {
-        this.user_log = `${$.name}\n`
-        this.index = index + 1
-
-        if (tgLogFlag) {
-            try {
-                this.ck = str
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-
-    }
-
-
-
-async sign() {
-        let name = "签到";
-        let options = {
-            method: "post",
-            url: `https://msmarket.msx.digitalyili.com/gateway/api/member/daily/sign`,
-            headers:  {
-    "Host": "msmarket.msx.digitalyili.com",
-    "charset": "utf-8",
-    "content-type": "application/json",
-    "access-token": `${this.ck}`
-  },
-            body: `{}`
-        };
-       // console.log(options);
-
-        let res = await httpRequest(options);
-        // console.log(res);
-        if (res.status == true) {
-         this.cusLog(`账号 ${this.index}  : 签到成功`)
-        } else if (res.status == false) {
-            this.cusLog(`账号 ${this.index}  :  ck过期 请重新抓取 access-token`)
-        } else this.cusLog(`账号[${this.index}]  ${name} 失败 ❌ 了呢`), console.log(res);
-    }
-async point() {
-        let name = "个人信息";
-        let options = {
-            method: "get",
-            url: `https://msmarket.msx.digitalyili.com/gateway/api/member/point`,
-            headers:  {
-    "Host": "msmarket.msx.digitalyili.com",
-    "charset": "utf-8",
-    "content-type": "application/json",
-    "access-token": `${this.ck}`
-  }
-          
-        };
-       // console.log(options);
-
-        let res = await httpRequest(options);
-        // console.log(res);
-        if (res.status == true) {
-         this.cusLog(`账号 ${this.index} 总积分 : ${res.data} `)
-        } else if (res.status == false) {
-            this.cusLog(`账号 ${this.index}  :  ck过期 请重新抓取 access-token`)
-        } else this.cusLog(`账号[${this.index}]  ${name} 失败 ❌ 了呢`), console.log(res);
-    }
-
-
-
-
-
-
-
-
-
-
-
-    async Sendtg_bot() {
-        const TelegramBot = require('node-telegram-bot-api');
-        const tg_token = process.env.tg_token;
-        // console.log(tg_token);
-        let bot = new TelegramBot(tg_token);
-        let msg = this.user_log;
-        // console.log(`=================`);
-        // console.log(this.chatId, msg);
-        await bot.sendMessage(this.chatId, msg);
-    }
-
-
-    cusLog(a) {
-        if (tgLogFlag) {
-            console.log(`    ${a}`);
-            msg += `\n ${a}`;
-            this.user_log += `\n ${a}`;
-        } else {
-            console.log(`    ${a}`);
-            msg += `\n    ${a}`;
-        }
-    }
-
-
-}
-
-
-
-
-
-///////////////////////////////////////////////////////////////////
-
-// 入口
 !(async () => {
-    const notify = require("./sendNotify");
-    $.doubleLog(await $.yiyan());
-    let users = await getUsers(CK_NAME, async (index, element) => {
-        let userInfo = new UserInfo(index, element);
-        return userInfo;
-    });
-
-    list = [];
-    users.forEach(async element => {
-        list.push(main(element));
-    });
-
-    await Promise.all(list);
-
-})()
-    .catch((e) => console.log(e))
-    .finally(() => $.done());
-
-
-// ==============================================================================
-async function getUsers(ckName, fnUserInfo) {
-    let userList = [];
-    let userCookie = process.env[ckName];
-    let envSplicer = ["@", "\n", "&"];
-    let userCount = 0;
-    if (userCookie) {
-        let e = envSplicer[0];
-        for (let o of envSplicer)
-            if (userCookie.indexOf(o) > -1) {
-                e = o;
-                break;
-            }
-        let arr = userCookie.split(e);
-        for (let index = 0; index < arr.length; index++) {
-            const element = arr[index];
-            element && userList.push(await fnUserInfo(index, element));
-        }
-        userCount = userList.length;
-    } else {
-        console.log("抓取https://msmarket.msx.digitalyili.com  中的access-token");
+    if (typeof $request != "undefined") {
+        await getCookie();
+        return;
     }
-    console.log(`共找到${userCount}个账号`), !0;
-    return userList;
+    await main();
+})()
+    .catch((e) => {
+        $.log($.name, `❌失败! 原因: ${e}!`, "");
+    })
+    .finally(() => {
+        $.done();
+    });
+
+//脚本入口函数main()
+async function main() {
+    if (env == '') {
+        //没有设置变量,直接退出
+        $.msg($.name, "", `没有填写变量: ${env_name}`);
+        return;
+    }
+    //多账号分割,这里默认是换行(\n)分割,其他情况自己实现
+    //split('\n')会把字符串按照换行符分割, 并把结果存在user_ck数组里
+    let user_ck = env.split('\n');
+    let index = 1; //用来给账号标记序号, 从1开始
+    //循环遍历每个账号
+    for (let ck of user_ck) {
+        if (!ck) continue; //跳过空行
+        let cookie = ck;
+        //用一个对象代表账号, 里面存放账号信息
+        let user = {
+            index: index,
+            cookie, //简写法, 效果等同于 openid: openid,
+        };
+        index = index + 1; //每次用完序号+1
+        //开始账号任务
+        await userTask(user);
+        //每个账号之间等1~5秒随机时间
+        let rnd_time = Math.floor(Math.random() * 4000) + 1000;
+        console.log(`账号[${user.index}]随机等待${rnd_time / 1000}秒...`);
+        await $.wait(rnd_time);
+    }
+    //发送通知
+    notify();
 }
 
-async function httpRequest(options, type = false) {
-    return new Promise((resolve) => {
-        try {
-            $.send(options, async (err, res_body, res_format, res) => {
-                if (err) {
-                    console.log(`错误, 检查点--2`); return;
-                }
-                if (!type) {
-                    resolve(res_body);
-                } resolve(res_format);
-            });
-        } catch (error) {
-            console.log(error);
-        }
+async function userTask(user) {
+    //任务逻辑都放这里了, 与脚本入口分开, 方便分类控制并模块化
+    await signin(user);
 
+}
+
+function signin(user) {
+    return new Promise((resolve) => {
+        const header = {
+            "Host": "msmarket.msx.digitalyili.com",
+            "charset": "utf-8",
+            "content-type": "application/json",
+            "access-token": `${user.cookie}`
+        };
+        const params=`{}`
+        const signinRequest = {
+            url: "https://msmarket.msx.digitalyili.com/gateway/api/member/daily/sign",
+            headers: header,
+            body: params
+        };
+        $.post(signinRequest, (error, response, data) => {
+            try {
+                var result = JSON.parse(data);
+                console.log(result)
+                if (result?.status) {
+                    message += `账号[${user.index}] 🟢${result?.msg}\n`;
+                } else {
+                    message += `账号[${user.index}]🟡${result?.msg}\n`
+                }
+            } catch (error) {
+                message += `🔴${result?.msg}`;
+                $.logErr(error)
+            } finally {
+                resolve();
+            }
+        });
     });
 }
 
-
-
-
-
-
-
-// ============================================================================================================================
-
-// 新的 env 函数, 增加自定义功能 yml-11.12改   合并
-function Env(name, env) {
-    "undefined" != typeof process &&
-        JSON.stringify(process.env).indexOf("GITHUB") > -1 &&
-        process.exit(0);
-    return new (class {
-        constructor(name, env) {
-            this.name = name;
-            this.notifyStr = "";
-            this.notifyFlag = false;
-            this.startTime = new Date().getTime();
-            Object.assign(this, env);
-            console.log(`${this.name} 开始运行: \n`);
-        }
-        isNode() {
-            return "undefined" != typeof module && !!module.exports;
-        }
-        send(options, e = () => { }) {
-            let m = options.method.toLowerCase();
-            let t = options;
-            if (m != "get" && m != "post" && m != "put" && m != "delete") {
-                console.log(`无效的http方法: ${m}`);
-                return;
-            }
-            if (m == "get" && t.headers) {
-                // delete t.headers["Content-Type"];
-                delete t.headers["Content-Length"];
-            } else if (t.body && t.headers) {
-                if (t.headers["content-type"]) {
-                    let tem = t.headers["content-type"];
-                    delete t.headers["content-type"];
-                    t.headers["Content-Type"] = tem;
-                } else if (t.body && t.headers) {
-                    if (!t.headers["Content-Type"])
-                        t.headers["Content-Type"] = "application/x-www-form-urlencoded";
-                }
-            }
-            if (this.isNode()) {
-                this.request = this.request ? this.request : require("request");
-                this.request(options, function (error, response) {
-                    if (error) throw new Error(error);
-                    let res_body = response.body;
-                    let res = response;
-                    try {
-                        if (typeof res_body == "string") {
-                            if ($.isJsonStr(res_body)) {
-                                res_body = JSON.parse(res_body);
-                                let res_format = $.formatJson(response.body);
-                                e(null, res_body, res_format, res);
-                            } else e(null, res_body, res_format, res);
-                        } else e(null, res_body, res_format, res);
-                    } catch (error) {
-                        console.log(error);
-                        let a = `ENV -- request 请求错误, 检查点1\n${error}`;
-                        e(a, null, null, null);
-                    }
-                });
-            }
-        }
-        isJsonStr(str) {
-            if (typeof str == "string") {
-                try {
-                    if (typeof JSON.parse(str) == "object") {
-                        return true;
-                    }
-                } catch (e) {
-                    return false;
-                }
-            }
-            return false;
-        }
-        formatJson(value) {
-            var json = value;
-            var i = 0,
-                len = 0,
-                tab = "    ",
-                targetJson = "",
-                indentLevel = 0,
-                inString = false,
-                currentChar = null;
-            for (i = 0, len = json.length; i < len; i += 1) {
-                currentChar = json.charAt(i);
-                switch (currentChar) {
-                    case "{":
-                    case "[":
-                        if (!inString) {
-                            targetJson += currentChar + "\n" + repeat(tab, indentLevel + 1);
-                            indentLevel += 1;
-                        } else {
-                            targetJson += currentChar;
-                        }
-                        break;
-                    case "}":
-                    case "]":
-                        if (!inString) {
-                            indentLevel -= 1;
-                            targetJson += "\n" + repeat(tab, indentLevel) + currentChar;
-                        } else {
-                            targetJson += currentChar;
-                        }
-                        break;
-                    case ",":
-                        if (!inString) {
-                            targetJson += ",\n" + repeat(tab, indentLevel);
-                        } else {
-                            targetJson += currentChar;
-                        }
-                        break;
-                    case ":":
-                        if (!inString) {
-                            targetJson += ": ";
-                        } else {
-                            targetJson += currentChar;
-                        }
-                        break;
-                    case " ":
-                    case "\n":
-                    case "\t":
-                        if (inString) {
-                            targetJson += currentChar;
-                        }
-                        break;
-                    case '"':
-                        if (i > 0 && json.charAt(i - 1) !== "\\") {
-                            inString = !inString;
-                        }
-                        targetJson += currentChar;
-                        break;
-                    default:
-                        targetJson += currentChar;
-                        break;
-                }
-            }
-            function repeat(s, count) {
-                return new Array(count + 1).join(s);
-            }
-            function repeat(s, count) {
-                return new Array(count + 1).join(s);
-            }
-            return targetJson;
-        }
-        type(str) {
-            if (this.strCode(str) > 20) {
-                return console.log(`数据类型是: ${typeof str}`);
-            }
-            return console.log(`${str}数据类型是: ${typeof str}`);
-        }
-        strCode(str) {
-            var count = 0;
-            if (str) {
-                let len = str.length;
-                for (var i = 0; i < len; i++) {
-                    if (str.charCodeAt(i) > 255) {
-                        count += 2;
-                    } else {
-                        count++;
-                    }
-                }
-                return count;
-            } else return 0;
-        }
-        async SendMsg(message) {
-            if (!message) return;
-            if (Notify > 0) {
-                if ($.isNode()) {
-                    var notify = require("./sendNotify");
-                    await notify.sendNotify($.name, message);
+function point(user) {
+    return new Promise((resolve) => {
+        const header = {
+            "Host": "msmarket.msx.digitalyili.com",
+            "charset": "utf-8",
+            "content-type": "application/json",
+            "access-token": `${user.cookie}`
+        };
+        const signinRequest = {
+            url: "https://msmarket.msx.digitalyili.com/gateway/api/member/point",
+            headers: header,
+        };
+        $.get(signinRequest, (error, response, data) => {
+            try {
+                var result = JSON.parse(data);
+                console.log(result)
+                if (result?.status) {
+                    message += `🟢总积分 : ${result?.data}\n`;
                 } else {
-                    console.log($.name, "", message);
+                    message += `🟡${result?.msg}\n`
                 }
-            } else {
-                console.log(message);
+            } catch (error) {
+                message += `🔴${result?.msg}`;
+                $.logErr(error)
+            } finally {
+                resolve();
             }
+        });
+    });
+}
+//获取cookie
+async function getCookie() {
+    if ($request && $request.method != "OPTIONS" && $request.url.match(/\/wp-admin\//)) {
+        const cookie = $request.headers['Cookie'] || $request.headers['cookie'];
+        $.setdata(cookie.env_name);
+        $.msg($.name, '🟢获取会话成功', '');
+    }
+}
+
+//通知函数
+async function notify() {
+    $.msg($.name, "", message);
+}
+
+
+
+
+/** ---------------------------------固定不动区域----------------------------------------- */
+
+//From chavyleung's Env.js
+function Env(name, opts) {
+    class Http {
+        constructor(env) {
+            this.env = env;
         }
-        getMin(a, b) {
-            return a < b ? a : b;
-        }
-        getMax(a, b) {
-            return a < b ? b : a;
-        }
-        json2str(obj, c, encodeUrl = false) {
-            let ret = [];
-            for (let keys of Object.keys(obj).sort()) {
-                let v = obj[keys];
-                if (v && encodeUrl) v = encodeURIComponent(v);
-                ret.push(keys + "=" + v);
+
+        send(opts, method = "GET") {
+            opts = typeof opts === "string" ? { url: opts } : opts;
+            let sender = this.get;
+            if (method === "POST") {
+                sender = this.post;
             }
-            return ret.join(c);
-        }
-        str2json(str, decodeUrl = false) {
-            let ret = {};
-            for (let item of str.split("&")) {
-                if (!item) continue;
-                let idx = item.indexOf("=");
-                if (idx == -1) continue;
-                let k = item.substr(0, idx);
-                let v = item.substr(idx + 1);
-                if (decodeUrl) v = decodeURIComponent(v);
-                ret[k] = v;
-            }
-            return ret;
-        }
-        randomStr(len, up = false, charset = "abcdef0123456789") {
-            let str = "";
-            for (let i = 0; i < len; i++) {
-                str += charset.charAt(Math.floor(Math.random() * charset.length));
-            }
-            if (!up) {
-                return str;
-            }
-            return str.toUpperCase();
-        }
-        phoneNum(phone_num) {
-            if (phone_num.length == 11) {
-                let data = phone_num.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-                return data;
-            } else {
-                return phone_num;
-            }
-        }
-        randomInt(min, max) {
-            return Math.round(Math.random() * (max - min) + min);
-        }
-        async yiyan() {
-            this.request = this.request ? this.request : require("request");
-            return new Promise((resolve) => {
-                var options = {
-                    method: "GET",
-                    url: "https://v1.hitokoto.cn/",
-                    headers: {},
-                };
-                this.request(options, function (error, response) {
-                    let data = JSON.parse(response.body);
-                    let data_ = `[一言]: ${data.hitokoto}  by--${data.from}`;
-                    resolve(data_);
+            return new Promise((resolve, reject) => {
+                sender.call(this, opts, (err, resp, body) => {
+                    if (err) reject(err);
+                    else resolve(resp);
                 });
             });
         }
-        wait(t) {
-            return new Promise((e) => setTimeout(e, t * 1000));
+
+        get(opts) {
+            return this.send.call(this.env, opts);
         }
-        ts(type = false, _data = "") {
-            let myDate = new Date();
-            let a = "";
-            switch (type) {
-                case 10:
-                    a = Math.round(new Date().getTime() / 1000).toString();
-                    break;
-                case 13:
-                    a = Math.round(new Date().getTime()).toString();
-                    break;
-                case "h":
-                    a = myDate.getHours();
-                    break;
-                case "m":
-                    a = myDate.getMinutes();
-                    break;
-                case "y":
-                    a = myDate.getFullYear();
-                    break;
-                case "h":
-                    a = myDate.getHours();
-                    break;
-                case "mo":
-                    a = myDate.getMonth();
-                    break;
-                case "d":
-                    a = myDate.getDate();
-                    break;
-                case "ts2Data":
-                    if (_data != "") {
-                        time = _data;
-                        if (time.toString().length == 13) {
-                            let date = new Date(time + 8 * 3600 * 1000);
-                            a = date.toJSON().substr(0, 19).replace("T", " ");
-                        } else if (time.toString().length == 10) {
-                            time = time * 1000;
-                            let date = new Date(time + 8 * 3600 * 1000);
-                            a = date.toJSON().substr(0, 19).replace("T", " ");
-                        }
-                    }
-                    break;
-                default:
-                    a = "未知错误,请检查";
-                    break;
+
+        post(opts) {
+            return this.send.call(this.env, opts, "POST");
+        }
+    }
+
+    return new (class {
+        constructor(name, opts) {
+            this.name = name;
+            this.http = new Http(this);
+            this.data = null;
+            this.dataFile = "box.dat";
+            this.logs = [];
+            this.isMute = false;
+            this.isNeedRewrite = false;
+            this.logSeparator = "\n";
+            this.startTime = new Date().getTime();
+            Object.assign(this, opts);
+            this.log("", `🔔${this.name}, 开始!`);
+        }
+
+        isNode() {
+            return "undefined" !== typeof module && !!module.exports;
+        }
+
+        isQuanX() {
+            return "undefined" !== typeof $task;
+        }
+
+        isSurge() {
+            return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
+        }
+
+        isLoon() {
+            return "undefined" !== typeof $loon;
+        }
+
+        toObj(str, defaultValue = null) {
+            try {
+                return JSON.parse(str);
+            } catch {
+                return defaultValue;
             }
-            return a;
         }
-        doubleLog(a) {
-            console.log(`    ${a}`);
-            msg += `\n    ${a}`;
+
+        toStr(obj, defaultValue = null) {
+            try {
+                return JSON.stringify(obj);
+            } catch {
+                return defaultValue;
+            }
         }
-        async done(t = {}) {
-            await $.SendMsg(msg);
-            const e = new Date().getTime(),
-                s = (e - this.startTime) / 1e3;
-            console.log(`\n${this.name} 运行结束，共运行了 ${s} 秒！`);
+
+        getjson(key, defaultValue) {
+            let json = defaultValue;
+            const val = this.getdata(key);
+            if (val) {
+                try {
+                    json = JSON.parse(this.getdata(key));
+                } catch { }
+            }
+            return json;
         }
-    })(name, env);
+
+        setjson(val, key) {
+            try {
+                return this.setdata(JSON.stringify(val), key);
+            } catch {
+                return false;
+            }
+        }
+
+        getScript(url) {
+            return new Promise((resolve) => {
+                this.get({ url }, (err, resp, body) => resolve(body));
+            });
+        }
+
+        runScript(script, runOpts) {
+            return new Promise((resolve) => {
+                let httpapi = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+                httpapi = httpapi ? httpapi.replace(/\n/g, "").trim() : httpapi;
+                let httpapi_timeout = this.getdata(
+                    "@chavy_boxjs_userCfgs.httpapi_timeout"
+                );
+                httpapi_timeout = httpapi_timeout ? httpapi_timeout * 1 : 20;
+                httpapi_timeout =
+                    runOpts && runOpts.timeout ? runOpts.timeout : httpapi_timeout;
+                const [key, addr] = httpapi.split("@");
+                const opts = {
+                    url: `http://${addr}/v1/scripting/evaluate`,
+                    body: {
+                        script_text: script,
+                        mock_type: "cron",
+                        timeout: httpapi_timeout,
+                    },
+                    headers: { "X-Key": key, Accept: "*/*" },
+                };
+                this.post(opts, (err, resp, body) => resolve(body));
+            }).catch((e) => this.logErr(e));
+        }
+
+        loaddata() {
+            if (this.isNode()) {
+                this.fs = this.fs ? this.fs : require("fs");
+                this.path = this.path ? this.path : require("path");
+                const curDirDataFilePath = this.path.resolve(this.dataFile);
+                const rootDirDataFilePath = this.path.resolve(
+                    process.cwd(),
+                    this.dataFile
+                );
+                const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
+                const isRootDirDataFile =
+                    !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
+                if (isCurDirDataFile || isRootDirDataFile) {
+                    const datPath = isCurDirDataFile
+                        ? curDirDataFilePath
+                        : rootDirDataFilePath;
+                    try {
+                        return JSON.parse(this.fs.readFileSync(datPath));
+                    } catch (e) {
+                        return {};
+                    }
+                } else return {};
+            } else return {};
+        }
+
+        writedata() {
+            if (this.isNode()) {
+                this.fs = this.fs ? this.fs : require("fs");
+                this.path = this.path ? this.path : require("path");
+                const curDirDataFilePath = this.path.resolve(this.dataFile);
+                const rootDirDataFilePath = this.path.resolve(
+                    process.cwd(),
+                    this.dataFile
+                );
+                const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
+                const isRootDirDataFile =
+                    !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
+                const jsondata = JSON.stringify(this.data);
+                if (isCurDirDataFile) {
+                    this.fs.writeFileSync(curDirDataFilePath, jsondata);
+                } else if (isRootDirDataFile) {
+                    this.fs.writeFileSync(rootDirDataFilePath, jsondata);
+                } else {
+                    this.fs.writeFileSync(curDirDataFilePath, jsondata);
+                }
+            }
+        }
+
+        lodash_get(source, path, defaultValue = undefined) {
+            const paths = path.replace(/\[(\d+)\]/g, ".$1").split(".");
+            let result = source;
+            for (const p of paths) {
+                result = Object(result)[p];
+                if (result === undefined) {
+                    return defaultValue;
+                }
+            }
+            return result;
+        }
+
+        lodash_set(obj, path, value) {
+            if (Object(obj) !== obj) return obj;
+            if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [];
+            path
+                .slice(0, -1)
+                .reduce(
+                    (a, c, i) =>
+                        Object(a[c]) === a[c]
+                            ? a[c]
+                            : (a[c] = Math.abs(path[i + 1]) >> 0 === +path[i + 1] ? [] : {}),
+                    obj
+                )[path[path.length - 1]] = value;
+            return obj;
+        }
+
+        getdata(key) {
+            let val = this.getval(key);
+            // 如果以 @
+            if (/^@/.test(key)) {
+                const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
+                const objval = objkey ? this.getval(objkey) : "";
+                if (objval) {
+                    try {
+                        const objedval = JSON.parse(objval);
+                        val = objedval ? this.lodash_get(objedval, paths, "") : val;
+                    } catch (e) {
+                        val = "";
+                    }
+                }
+            }
+            return val;
+        }
+
+        setdata(val, key) {
+            let issuc = false;
+            if (/^@/.test(key)) {
+                const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
+                const objdat = this.getval(objkey);
+                const objval = objkey
+                    ? objdat === "null"
+                        ? null
+                        : objdat || "{}"
+                    : "{}";
+                try {
+                    const objedval = JSON.parse(objval);
+                    this.lodash_set(objedval, paths, val);
+                    issuc = this.setval(JSON.stringify(objedval), objkey);
+                } catch (e) {
+                    const objedval = {};
+                    this.lodash_set(objedval, paths, val);
+                    issuc = this.setval(JSON.stringify(objedval), objkey);
+                }
+            } else {
+                issuc = this.setval(val, key);
+            }
+            return issuc;
+        }
+
+        getval(key) {
+            if (this.isSurge() || this.isLoon()) {
+                return $persistentStore.read(key);
+            } else if (this.isQuanX()) {
+                return $prefs.valueForKey(key);
+            } else if (this.isNode()) {
+                this.data = this.loaddata();
+                return this.data[key];
+            } else {
+                return (this.data && this.data[key]) || null;
+            }
+        }
+
+        setval(val, key) {
+            if (this.isSurge() || this.isLoon()) {
+                return $persistentStore.write(val, key);
+            } else if (this.isQuanX()) {
+                return $prefs.setValueForKey(val, key);
+            } else if (this.isNode()) {
+                this.data = this.loaddata();
+                this.data[key] = val;
+                this.writedata();
+                return true;
+            } else {
+                return (this.data && this.data[key]) || null;
+            }
+        }
+
+        initGotEnv(opts) {
+            this.got = this.got ? this.got : require("got");
+            this.cktough = this.cktough ? this.cktough : require("tough-cookie");
+            this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
+            if (opts) {
+                opts.headers = opts.headers ? opts.headers : {};
+                if (undefined === opts.headers.Cookie && undefined === opts.cookieJar) {
+                    opts.cookieJar = this.ckjar;
+                }
+            }
+        }
+
+        get(opts, callback = () => { }) {
+            if (opts.headers) {
+                delete opts.headers["Content-Type"];
+                delete opts.headers["Content-Length"];
+            }
+            if (this.isSurge() || this.isLoon()) {
+                if (this.isSurge() && this.isNeedRewrite) {
+                    opts.headers = opts.headers || {};
+                    Object.assign(opts.headers, { "X-Surge-Skip-Scripting": false });
+                }
+                $httpClient.get(opts, (err, resp, body) => {
+                    if (!err && resp) {
+                        resp.body = body;
+                        resp.statusCode = resp.status;
+                    }
+                    callback(err, resp, body);
+                });
+            } else if (this.isQuanX()) {
+                if (this.isNeedRewrite) {
+                    opts.opts = opts.opts || {};
+                    Object.assign(opts.opts, { hints: false });
+                }
+                $task.fetch(opts).then(
+                    (resp) => {
+                        const { statusCode: status, statusCode, headers, body } = resp;
+                        callback(null, { status, statusCode, headers, body }, body);
+                    },
+                    (err) => callback(err)
+                );
+            } else if (this.isNode()) {
+                this.initGotEnv(opts);
+                this.got(opts)
+                    .on("redirect", (resp, nextOpts) => {
+                        try {
+                            if (resp.headers["set-cookie"]) {
+                                const ck = resp.headers["set-cookie"]
+                                    .map(this.cktough.Cookie.parse)
+                                    .toString();
+                                if (ck) {
+                                    this.ckjar.setCookieSync(ck, null);
+                                }
+                                nextOpts.cookieJar = this.ckjar;
+                            }
+                        } catch (e) {
+                            this.logErr(e);
+                        }
+                        // this.ckjar.setCookieSync(resp.headers['set-cookie'].map(Cookie.parse).toString())
+                    })
+                    .then(
+                        (resp) => {
+                            const { statusCode: status, statusCode, headers, body } = resp;
+                            callback(null, { status, statusCode, headers, body }, body);
+                        },
+                        (err) => {
+                            const { message: error, response: resp } = err;
+                            callback(error, resp, resp && resp.body);
+                        }
+                    );
+            }
+        }
+
+        post(opts, callback = () => { }) {
+            // 如果指定了请求体, 但没指定`Content-Type`, 则自动生成
+            if (opts.body && opts.headers && !opts.headers["Content-Type"]) {
+                opts.headers["Content-Type"] = "application/x-www-form-urlencoded";
+            }
+            if (opts.headers) delete opts.headers["Content-Length"];
+            if (this.isSurge() || this.isLoon()) {
+                if (this.isSurge() && this.isNeedRewrite) {
+                    opts.headers = opts.headers || {};
+                    Object.assign(opts.headers, { "X-Surge-Skip-Scripting": false });
+                }
+                $httpClient.post(opts, (err, resp, body) => {
+                    if (!err && resp) {
+                        resp.body = body;
+                        resp.statusCode = resp.status;
+                    }
+                    callback(err, resp, body);
+                });
+            } else if (this.isQuanX()) {
+                opts.method = "POST";
+                if (this.isNeedRewrite) {
+                    opts.opts = opts.opts || {};
+                    Object.assign(opts.opts, { hints: false });
+                }
+                $task.fetch(opts).then(
+                    (resp) => {
+                        const { statusCode: status, statusCode, headers, body } = resp;
+                        callback(null, { status, statusCode, headers, body }, body);
+                    },
+                    (err) => callback(err)
+                );
+            } else if (this.isNode()) {
+                this.initGotEnv(opts);
+                const { url, ..._opts } = opts;
+                this.got.post(url, _opts).then(
+                    (resp) => {
+                        const { statusCode: status, statusCode, headers, body } = resp;
+                        callback(null, { status, statusCode, headers, body }, body);
+                    },
+                    (err) => {
+                        const { message: error, response: resp } = err;
+                        callback(error, resp, resp && resp.body);
+                    }
+                );
+            }
+        }
+        /**
+         *
+         * 示例:$.time('yyyy-MM-dd qq HH:mm:ss.S')
+         *    :$.time('yyyyMMddHHmmssS')
+         *    y:年 M:月 d:日 q:季 H:时 m:分 s:秒 S:毫秒
+         *    其中y可选0-4位占位符、S可选0-1位占位符，其余可选0-2位占位符
+         * @param {string} fmt 格式化参数
+         * @param {number} 可选: 根据指定时间戳返回格式化日期
+         *
+         */
+        time(fmt, ts = null) {
+            const date = ts ? new Date(ts) : new Date();
+            let o = {
+                "M+": date.getMonth() + 1,
+                "d+": date.getDate(),
+                "H+": date.getHours(),
+                "m+": date.getMinutes(),
+                "s+": date.getSeconds(),
+                "q+": Math.floor((date.getMonth() + 3) / 3),
+                S: date.getMilliseconds(),
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(
+                    RegExp.$1,
+                    (date.getFullYear() + "").substr(4 - RegExp.$1.length)
+                );
+            for (let k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(
+                        RegExp.$1,
+                        RegExp.$1.length == 1
+                            ? o[k]
+                            : ("00" + o[k]).substr(("" + o[k]).length)
+                    );
+            return fmt;
+        }
+
+        /**
+         * 系统通知
+         *
+         * > 通知参数: 同时支持 QuanX 和 Loon 两种格式, EnvJs根据运行环境自动转换, Surge 环境不支持多媒体通知
+         *
+         * 示例:
+         * $.msg(title, subt, desc, 'twitter://')
+         * $.msg(title, subt, desc, { 'open-url': 'twitter://', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+         * $.msg(title, subt, desc, { 'open-url': 'https://bing.com', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+         *
+         * @param {*} title 标题
+         * @param {*} subt 副标题
+         * @param {*} desc 通知详情
+         * @param {*} opts 通知参数
+         *
+         */
+        msg(title = name, subt = "", desc = "", opts) {
+            const toEnvOpts = (rawopts) => {
+                if (!rawopts) return rawopts;
+                if (typeof rawopts === "string") {
+                    if (this.isLoon()) return rawopts;
+                    else if (this.isQuanX()) return { "open-url": rawopts };
+                    else if (this.isSurge()) return { url: rawopts };
+                    else return undefined;
+                } else if (typeof rawopts === "object") {
+                    if (this.isLoon()) {
+                        let openUrl = rawopts.openUrl || rawopts.url || rawopts["open-url"];
+                        let mediaUrl = rawopts.mediaUrl || rawopts["media-url"];
+                        return { openUrl, mediaUrl };
+                    } else if (this.isQuanX()) {
+                        let openUrl = rawopts["open-url"] || rawopts.url || rawopts.openUrl;
+                        let mediaUrl = rawopts["media-url"] || rawopts.mediaUrl;
+                        return { "open-url": openUrl, "media-url": mediaUrl };
+                    } else if (this.isSurge()) {
+                        let openUrl = rawopts.url || rawopts.openUrl || rawopts["open-url"];
+                        return { url: openUrl };
+                    }
+                } else {
+                    return undefined;
+                }
+            };
+            if (!this.isMute) {
+                if (this.isSurge() || this.isLoon()) {
+                    $notification.post(title, subt, desc, toEnvOpts(opts));
+                } else if (this.isQuanX()) {
+                    $notify(title, subt, desc, toEnvOpts(opts));
+                }
+            }
+            if (!this.isMuteLog) {
+                let logs = ["", "==============📣系统通知📣=============="];
+                logs.push(title);
+                subt ? logs.push(subt) : "";
+                desc ? logs.push(desc) : "";
+                console.log(logs.join("\n"));
+                this.logs = this.logs.concat(logs);
+            }
+        }
+
+        log(...logs) {
+            if (logs.length > 0) {
+                this.logs = [...this.logs, ...logs];
+            }
+            console.log(logs.join(this.logSeparator));
+        }
+
+        logErr(err, msg) {
+            const isPrintSack = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+            if (!isPrintSack) {
+                this.log("", `❗️${this.name}, 错误!`, err);
+            } else {
+                this.log("", `❗️${this.name}, 错误!`, err.stack);
+            }
+        }
+
+        wait(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+        }
+
+        done(val = {}) {
+            const endTime = new Date().getTime();
+            const costTime = (endTime - this.startTime) / 1000;
+            this.log("", `🔔${this.name}, 结束! 🕛 ${costTime} 秒`);
+            this.log();
+            if (this.isSurge() || this.isQuanX() || this.isLoon()) {
+                $done(val);
+            }
+        }
+    })(name, opts);
 }
