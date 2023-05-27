@@ -81,7 +81,7 @@ function signin(user) {
                 if (result?.status && result?.data?.dailySign) {
                     message += `🟢签到成功！获得${result?.data?.dailySign?.bonusPoint}\n`;
                 } else {
-                    message += `🟡${result?.error?.msg}\n`
+                    message += `🟡${result?.error?.msg || '今日已签到' }\n`
                 }
             } catch (error) {
                 message += `🔴${result?.error}`;
