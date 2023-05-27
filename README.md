@@ -14,26 +14,26 @@
 > 仅用于学习，自用。收集和整理青龙面板脚本、Quantumult X脚本、使用python语言和go语言开发的脚本等，转换成支持Loon的格式，著作权归原作者所有，不建议引用，禁止fork。
     
 ### boxjs订阅
-* [sliverkiss.boxjs](https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/boxjs/sliverkiss.boxjs.json)  
+* [sliverkiss.boxjs](https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/boxjs/sliverkiss.boxjs.json)  
  
 ### loon脚本订阅
-* [sliverkiss.conf](https://raw.githubusercontent.com/Sliverkiss/helloworld/main//sliverkiss.conf) 
+* [sliverkiss.conf](https://raw.githubusercontent.com/Sliverkiss/helloworld/master//sliverkiss.conf) 
   
 ### 说明
 > 脚本主要用于签到类自动处理
 
 |名称|内容|变量|说明|状态
 |:--------:|:---------:|:-----:|:-----:|:-----:|
-| [米其林会员俱乐部](https://github.com/Sliverkiss/helloworld/blob/main/Study/michelin.js)  | 每周积分任务 | `michelin_data` |Authorization| 🟢 |
-| [挪客会员露营社](https://github.com/Sliverkiss/helloworld/blob/main/Study/naturehike.js) | 日常签到领挪金币 | `naturehikeCookie` |KDTWEAPPSESSIONID=XXX| 🟢 |
-| [STLXZ](https://github.com/Sliverkiss/helloworld/blob/main/Study/stlxz.js) | 每日签到 | `stl_cookie` |Cookie| 🟢 |
-| [喜马拉雅](https://github.com/Sliverkiss/helloworld/blob/main/Study/xmly.js) | 每日签到 | `xmly_cookie` |1&_token=XXXX;| 🟢 |
-| [元气森林会员中心](https://github.com/Sliverkiss/helloworld/blob/main/Study/yqslhy.js) | 每日签到 | `yqslCookie`|Authorization| 🟢 |
-| [zippo会员中心](https://github.com/Sliverkiss/helloworld/blob/main/Study/zippo.js) | 每日任务 | `zippoCookie` |openid#session_key|🟢 |
-| [贝因美贝家商城](https://github.com/Sliverkiss/helloworld/blob/main/Study/bym.js) | 每日签到 | `bym_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
-| [燕京啤酒小程序](https://github.com/Sliverkiss/helloworld/blob/main/Study/yjpj.js) | 每日签到 | `yjpj_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
-| [云闪付](https://github.com/Sliverkiss/helloworld/blob/main/Study/ysf.js) | 每日签到 | `ysf_cookie` |Authorization|🟢 |
-| [~嘉立创~](https://github.com/Sliverkiss/helloworld/blob/main/Study/jlc.js) | 每日签到 | `jlc_cookie` |lceda_session|🔴 |
+| [米其林会员俱乐部](https://github.com/Sliverkiss/helloworld/blob/master/Study/michelin.js)  | 每周积分任务 | `michelin_data` |Authorization| 🟢 |
+| [挪客会员露营社](https://github.com/Sliverkiss/helloworld/blob/master/Study/naturehike.js) | 日常签到领挪金币 | `naturehikeCookie` |KDTWEAPPSESSIONID=XXX| 🟢 |
+| [STLXZ](https://github.com/Sliverkiss/helloworld/blob/master/Study/stlxz.js) | 每日签到 | `stl_cookie` |Cookie| 🟢 |
+| [喜马拉雅](https://github.com/Sliverkiss/helloworld/blob/master/Study/xmly.js) | 每日签到 | `xmly_cookie` |1&_token=XXXX;| 🟢 |
+| [元气森林会员中心](https://github.com/Sliverkiss/helloworld/blob/master/Study/yqslhy.js) | 每日签到 | `yqslCookie`|Authorization| 🟢 |
+| [zippo会员中心](https://github.com/Sliverkiss/helloworld/blob/master/Study/zippo.js) | 每日任务 | `zippoCookie` |openid#session_key|🟢 |
+| [贝因美贝家商城](https://github.com/Sliverkiss/helloworld/blob/master/Study/bym.js) | 每日签到 | `bym_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
+| [燕京啤酒小程序](https://github.com/Sliverkiss/helloworld/blob/master/Study/yjpj.js) | 每日签到 | `yjpj_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
+| [云闪付](https://github.com/Sliverkiss/helloworld/blob/master/Study/ysf.js) | 每日签到 | `ysf_cookie` |Authorization|🟢 |
+| [~嘉立创~](https://github.com/Sliverkiss/helloworld/blob/master/Study/jlc.js) | 每日签到 | `jlc_cookie` |lceda_session|🔴 |
 
 # other
 <details>
