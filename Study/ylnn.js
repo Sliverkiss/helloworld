@@ -4,7 +4,7 @@
  * @FilePath: https://github.com/Sliverkiss/helloworld/master/Study/ylnn.js
  * @Description:
  * 伊利牛奶小程序 积分可以兑换实物 
- * 抓取 https://msmarket.msx.digitalyili.com  中的access-token,填写到stl_cookie中，多账号用#号连接
+ * 抓取 https://msmarket.msx.digitalyili.com  中的access-token,填写到ylnn_cookie中，多账号用#号连接
  * 
  * 只用过loon，理论上支持qx、surge，请自行尝试
  * 
@@ -18,19 +18,7 @@ const env = $.getdata(env_name)
 //通知相关
 var message = "";
 
-!(async () => {
-    if (typeof $request != "undefined") {
-        await getCookie();
-        return;
-    }
-    await main();
-})()
-    .catch((e) => {
-        $.log($.name, `❌失败! 原因: ${e}!`, "");
-    })
-    .finally(() => {
-        $.done();
-    });
+!(async () => await main())().catch((e) => $.log($.name, `❌失败! 原因: ${e}!`, "")).finally(() => $.done());
 
 //脚本入口函数main()
 async function main() {
@@ -65,8 +53,10 @@ async function main() {
 }
 
 async function userTask(user) {
+    message += `账号[${user.index}]\n`;
     //任务逻辑都放这里了, 与脚本入口分开, 方便分类控制并模块化
     await signin(user);
+    await point(user);
 
 }
 
@@ -78,7 +68,7 @@ function signin(user) {
             "content-type": "application/json",
             "access-token": `${user.cookie}`
         };
-        const params=`{}`
+        const params = `{}`
         const signinRequest = {
             url: "https://msmarket.msx.digitalyili.com/gateway/api/member/daily/sign",
             headers: header,
@@ -87,14 +77,14 @@ function signin(user) {
         $.post(signinRequest, (error, response, data) => {
             try {
                 var result = JSON.parse(data);
-                console.log(result)
-                if (result?.status) {
-                    message += `账号[${user.index}] 🟢${result?.msg}\n`;
+                console.log(data)
+                if (result?.status && result?.data?.dailySign) {
+                    message += `🟢签到成功！获得${result?.data?.dailySign?.bonusPoint}\n`;
                 } else {
-                    message += `账号[${user.index}]🟡${result?.msg}\n`
+                    message += `🟡${result?.error?.msg}\n`
                 }
             } catch (error) {
-                message += `🔴${result?.msg}`;
+                message += `🔴${result?.error}`;
                 $.logErr(error)
             } finally {
                 resolve();
@@ -135,8 +125,8 @@ function point(user) {
 }
 //获取cookie
 async function getCookie() {
-    if ($request && $request.method != "OPTIONS" && $request.url.match(/\/wp-admin\//)) {
-        const cookie = $request.headers['Cookie'] || $request.headers['cookie'];
+    if ($request && $request.method != "OPTIONS" && $request.url.match(/\/member\//)) {
+        const cookie = $request.headers['access-token'] || '';
         $.setdata(cookie.env_name);
         $.msg($.name, '🟢获取会话成功', '');
     }
