@@ -17,7 +17,7 @@
 * [sliverkiss.boxjs](https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/boxjs/sliverkiss.boxjs.json)  
  
 ### loon脚本订阅
-* [sliverkiss.conf](https://raw.githubusercontent.com/Sliverkiss/helloworld/master//sliverkiss.conf) 
+* [sliverkiss.conf](https://raw.githubusercontent.com/Sliverkiss/helloworld/master/sliverkiss.conf) 
   
 ### 说明
 > 脚本主要用于签到类自动处理
