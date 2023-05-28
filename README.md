@@ -8,6 +8,7 @@
 <a href="https://github.com/sliverkiss/helloworld/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/sliverkiss/helloworld?color=yellow&logo=riseup&logoColor=yellow&style=flat-square"></a>
 <a href="https://github.com/sliverkiss/helloworld/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/sliverkiss/helloworld?color=orange&style=flat-square"></a>
 <a href="https://github.com/sliverkiss/helloworld/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/sliverkiss/helloworld?color=red&style=flat-square"></a>
+ [![License](https://img.shields.io/npm/l/aoi.js.svg)](https://github.com/Sliverkiss/helloworld/blob/v6/LICENSE)
  ![GitHub issues](https://img.shields.io/github/languages/code-size/sliverkiss/helloworld?style=flat-square)
 </div>
 
