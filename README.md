@@ -34,11 +34,14 @@
 | [燕京啤酒小程序](https://github.com/Sliverkiss/helloworld/blob/master/Study/yjpj.js) | 每日签到 | `yjpj_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
 | [云闪付](https://github.com/Sliverkiss/helloworld/blob/master/Study/ysf.js) | 每日签到 | `ysf_cookie` |Authorization|🟢 |
 | [伊利牛奶小程序](https://github.com/Sliverkiss/helloworld/blob/master/Study/ylnn.js) | 每日签到 | `ylnn_cookie` |access-token|🟢 |
+| [江玲智行](https://github.com/Sliverkiss/helloworld/blob/master/Study/jlzx.js) | 每日签到 | `jlzx_data` |access-token|🟢 |
 
 # other
 <details>
 <summary>更新日志</summary>
  
+- 2023-05-28 
+  - 新增江玲智行app每日签到任务 by sliverkiss 
 - 2023-05-27 
   - 新增伊利牛奶小程序每日签到任务 by sliverkiss
 - 2023-05-23 
