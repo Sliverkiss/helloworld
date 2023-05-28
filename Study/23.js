@@ -71,9 +71,22 @@ function login(user) {
                 //{ ret: 1, msg: '登录成功', redir: '' }
                 var result = JSON.parse(data);
                 console.log(response.headers['Set-Cookie'])
+                let header=response.headers['Set-Cookie'];
                 if (result?.ret) {
                    $.log(`${result?.msg}`);
-
+                    let hd=header.split(" ");
+                    let uid=hd[0];
+                    console.log(uid);
+                    let email=hd[9];
+                    console.log(email);
+                    let key=hd[18];
+                    console.log(key)
+                    let ip=hd[27];
+                    console.log(ip);
+                    let expireIn=hd[36];
+                    console.log(expireIn);
+                    $.cookie=email+expireIn+ip+key+uid;
+                    console.log($.cookie);
                 } else {
                     $.log(`${result?.msg}`);
                 }
