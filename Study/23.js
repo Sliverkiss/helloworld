@@ -71,7 +71,7 @@ function login(user) {
                 //{ ret: 1, msg: '登录成功', redir: '' }
                 var result = JSON.parse(data);
                 console.log(response.headers['Set-Cookie'])
-                let header=response.headers['Set-Cookie'];
+                var header=response.headers['Set-Cookie'];
                 if (result?.ret) {
                    $.log(`${result?.msg}`);
                     let hd=header.split(" ");
@@ -85,13 +85,13 @@ function login(user) {
                     console.log(ip);
                     let expireIn=hd[36];
                     console.log(expireIn);
-                    $.cookie=email+expireIn+ip+key+uid;
-                    console.log($.cookie);
+                    let cookie=email+expireIn+ip+key+uid;
+                    console.log(cookie);
                 } else {
                     $.log(`${result?.msg}`);
                 }
             } catch (error) {
-                message += `🔴${result?.msg}`;
+                message += `🔴${MediaError}`;
                 $.logErr(error)
             } finally {
                 resolve();
