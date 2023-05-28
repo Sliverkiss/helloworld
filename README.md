@@ -4,11 +4,17 @@
   <img src="https://github.com/Sliverkiss/helloworld/blob/aa89bf6274ad730ddd5d681a941bbd507d0470d6/Loon/icon/airbaloon.png?raw=true"   style="width:100px;" align="center"  alt=""/>
 </a>
   </div>
-
+<div align="center">
 <h1 align="center">Loon-Actions</h1>
+  <div align="center">
+    <a href="">Home Page</a> |
+    <a href="">Discord</a> |
+    <a href="">Examples</a> |
+    <a href="">Documentation</a>
+</div>
+  <br/>
 <div align="center"><strong>If you care about this project at all, please don't say anything to anyone.</strong>
-
-<br/>
+</div>
 <br/>
   
 <a href="https://github.com/sliverkiss/helloworld/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/sliverkiss/helloworld?color=yellow&logo=riseup&logoColor=yellow&style=flat-square"></a>
