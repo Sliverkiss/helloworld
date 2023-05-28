@@ -2,7 +2,7 @@
 
 <div align="center" style="margin: 30px;">
 <a href="https://aoi.js.org/">
-  <img src="https://github.com/Sliverkiss/helloworld/blob/aa89bf6274ad730ddd5d681a941bbd507d0470d6/Loon/icon/airbaloon.png?raw=true"   style="width:300px;" align="center"  alt="aoi.js"/>
+  <img src="https://github.com/Sliverkiss/helloworld/blob/aa89bf6274ad730ddd5d681a941bbd507d0470d6/Loon/icon/airbaloon.png?raw=true"   style="width:200px;" align="center"  alt=""/>
 </a>
 <br />
 <br />
