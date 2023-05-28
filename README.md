@@ -5,7 +5,7 @@
 </a>
   </div>
 <div align="center">
-<h1 align="center">Loon-Actions</h1>
+  <br/>
   <div align="center">
     <a href="">Home Page</a> |
     <a href="">Discord</a> |
