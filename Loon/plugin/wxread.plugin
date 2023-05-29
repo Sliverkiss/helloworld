@@ -9,4 +9,3 @@ http-response ^https?://mp\.weixin\.qq\.com/s\?.* script-path=https://github.com
 
 [MITM]
 hostname = mp.weixin.qq.com
-
