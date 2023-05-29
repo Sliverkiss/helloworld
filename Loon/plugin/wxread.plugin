@@ -2,7 +2,7 @@
 #!desc=微信阅读（全自动），阅读得积分，10000币换1元。单篇阅读为150币，一轮为30篇，即一轮获得0.45
 #!homepage=https://github.com/ddgksf2013
 #!author=@ddgksf2013
-#!icon=https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/wxread.png
+#!icon=https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/wxread.png
 
 [Script]
 http-response ^https?://mp\.weixin\.qq\.com/s\?.* script-path=https://github.com/ddgksf2013/Scripts/raw/master/wechat_auto_read.js, requires-body=true, timeout=10, tag=微信自动阅读（羊毛） 
