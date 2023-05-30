@@ -1,7 +1,7 @@
 #!name=PDF Expert
 #!desc=PDF Expert 解锁订阅,先开启规则，在进入软件即可，自动解锁
 #!author=@豆豆和Key
-#!icon=https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/pdfexpert.png
+#!icon=https://github.com/Sliverkiss/helloworld/blob/master/Loon/icon/pdfexpert.png
 
 [Script]
 http-request ^https:\/\/license\.pdfexpert\.com\/api\/2\.0\/pdfexpert6\/subscription\/refresh script-path=https://raw.githubusercontent.com/jizhi0520/QX/main/PDFExpert.js, requires-body=true, timeout=60 ,tag=PDFExpert_4
