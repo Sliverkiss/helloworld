@@ -1,4 +1,13 @@
-
+/*
+ * @Author: Sliverkiss
+ * @Date: 2023-05-30 08:44:39
+ * @Description:
+ * 23区空港 签到领流量
+ * 将邮箱和密码用#号连接,填写到23_data中，多账号用换行
+ * 
+ * 只用过loon，理论上支持qx、surge，请自行尝试
+ * 
+ */
 const $ = new Env("23区空港");
 //环境变量名字
 const env_name = "23_data";
@@ -50,7 +59,7 @@ async function userTask(user) {
     message+=`帐号：${user.name}\n`
     //任务逻辑都放这里了, 与脚本入口分开, 方便分类控制并模块化
     await login(user);
-   // await checkin(user);
+    await checkin(user);
 
 }
 //登录接口
@@ -58,9 +67,9 @@ function login(user) {
     return new Promise((resolve) => {
         const header = {
             Referer: "https://ww8.12345.al/auth/login",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         };
-        const params=`code=&email=${user.email}&passwd=${user.pwd}&remember_me=on"`
+        const params=`code=&email=${user.email}&passwd=${user.pwd}&remember_me=on`
         const signinRequest = {
             url: "https://ww8.12345.al/auth/login",
             headers: header,
@@ -70,28 +79,21 @@ function login(user) {
             try {
                 //{ ret: 1, msg: '登录成功', redir: '' }
                 var result = JSON.parse(data);
-                console.log(response.headers['Set-Cookie'])
                 var header=response.headers['Set-Cookie'];
                 if (result?.ret) {
                    $.log(`${result?.msg}`);
                     let hd=header.split(" ");
                     let uid=hd[0];
-                    console.log(uid);
                     let email=hd[9];
-                    console.log(email);
                     let key=hd[18];
-                    console.log(key)
                     let ip=hd[27];
-                    console.log(ip);
                     let expireIn=hd[36];
-                    console.log(expireIn);
-                    let cookie=email+expireIn+ip+key+uid;
-                    console.log(cookie);
+                    $.cookie=email+expireIn+ip+key+uid;
                 } else {
                     $.log(`${result?.msg}`);
                 }
             } catch (error) {
-                message += `🔴${MediaError}`;
+                message += `🔴${error}`;
                 $.logErr(error)
             } finally {
                 resolve();
@@ -105,18 +107,18 @@ function checkin(user) {
         const header = {
             Cookie: `${$.cookie}`
         };
-        const params = `{}`
         const signinRequest = {
             url: "https://ww8.12345.al/user/checkin",
-            headers: header,
-            body: params
+            headers: header
         };
         $.post(signinRequest, (error, response, data) => {
             try {
                 var result = JSON.parse(data);
-                console.log(data)
                 if (result?.ret) {
                     message += `签到结果：Checkin!${result?.msg}\n`;
+                    message+=`已用流量：${result?.trafficInfo?.lastUsedTraffic}\n`
+                    message+=`剩余流量：${result?.trafficInfo?.unUsedTraffic}\n`
+                    message+=`总流量：${result?.traffic}\n`
                 } else {
                     message += `🟡${result?.error?.msg}\n`
                 }
