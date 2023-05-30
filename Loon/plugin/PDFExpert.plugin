@@ -1,5 +1,6 @@
 #!name=PDF Expert
 #!desc=PDF Expert 解锁订阅,先开启规则，在进入软件即可，自动解锁
+#!author=@豆豆和Key
 #!icon=https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/pdfexpert.png
 
 [Script]
