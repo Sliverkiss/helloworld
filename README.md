@@ -50,6 +50,7 @@
 | [江玲智行](https://github.com/Sliverkiss/helloworld/blob/master/Study/jlzx.js) | 每日签到 | `jlzx_data` |access-token|🟢 |
 | [23区空港](https://github.com/Sliverkiss/helloworld/blob/master/Study/23.js) | 签到领流量 | `23_data` |email#password|🟢 |
 | [捷配](https://github.com/Sliverkiss/helloworld/blob/master/Study/jiepei.js) | 签到领余额 | `jp_data` |Authorization|🟢 |
+| [三只松鼠](https://github.com/Sliverkiss/helloworld/blob/master/Study/jiepei.js) | 签到 | `szss_cookie` |KDTWEAPPSESSIONID=XXX|🟢 |
 
 # other
 <details>
