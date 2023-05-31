@@ -1,0 +1,11 @@
+#!name=Bilibili大会员（2022-12-05）
+#!author=@ddgksf2013
+#!homepage=https://github.com/ddgksf2013
+#!desc=解锁VIP番剧和影视
+#!icon=https://github.com/Sliverkiss/helloworld/raw/master/Loon/icon/bilbil.png
+
+[Script]
+http-request ^http[s]?:\/\/((app|api)\.(\w{2,15})?\.(com|cn)).*player\.(v3|v2|v1).Play(URL|View).*$ script-path=BilibiliProCrack.js, timeout=60 ,tag=BilibiliProCrack_17
+
+[MITM]
+hostname = app.bilibili.com,grpc.biliapi.net,*.biliapi.net,app.bilibili.com,api.bilibili.com,api.live.bilibili.com,api.vc.bilibili.com,dataflow.biliapi.com,124.239.240.*,101.89.57.66,218.94.210.66,240e:b1:9801:206:11:0:0:*
