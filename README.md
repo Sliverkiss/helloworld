@@ -56,6 +56,8 @@
 <details>
 <summary>更新日志</summary>
  
+- 2023-05-31
+  - 新增三只松鼠小程序签到 by sliverkiss   
 - 2023-05-30
   - 新增23区空港签到领流量 by sliverkiss   
   - 新增捷配签到 by sliverkiss   
