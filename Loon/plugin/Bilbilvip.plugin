@@ -5,7 +5,7 @@
 #!icon=https://github.com/Sliverkiss/helloworld/raw/master/Loon/icon/bilbil.png
 
 [Script]
-http-request ^http[s]?:\/\/((app|api)\.(\w{2,15})?\.(com|cn)).*player\.(v3|v2|v1).Play(URL|View).*$ script-path=BilibiliProCrack.js, timeout=60 ,tag=BilibiliProCrack_17
+http-request ^http[s]?:\/\/((app|api)\.(\w{2,15})?\.(com|cn)).*player\.(v3|v2|v1).Play(URL|View).*$ script-path=https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/Scripts/BilibiliProCrack.js, timeout=60 ,tag=Bilibili大会员
 
 [MITM]
 hostname = app.bilibili.com,grpc.biliapi.net,*.biliapi.net,app.bilibili.com,api.bilibili.com,api.live.bilibili.com,api.vc.bilibili.com,dataflow.biliapi.com,124.239.240.*,101.89.57.66,218.94.210.66,240e:b1:9801:206:11:0:0:*
