@@ -8,6 +8,7 @@
  * 只用过loon，理论上支持qx、surge，请自行尝试
  * 
  */
+
 const $ = new Env("23区空港");
 //环境变量名字
 const env_name = "23_data";
