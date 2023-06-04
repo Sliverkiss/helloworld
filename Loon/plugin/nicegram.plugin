@@ -1,0 +1,11 @@
+#!name=Nicegram会员
+#!author=@R·E
+#!homepage=https://github.com/I-am-R-E/Functional-Store-Hub/tree/Master/Nicegram
+#!desc=解锁Nicegram会员(2022.07.15)
+#!icon=https://github.com/Sliverkiss/helloworld/raw/master/Loon/icon/nicegram.png
+
+[Script]
+http-request ^https?:\/\/restore-access\.indream\.app\/restoreAccess\?id=\w+$ script-path=https://raw.githubusercontent.com/I-am-R-E/Functional-Store-Hub/Master/Nicegram/Script/Nicegram.js, timeout=60 ,tag=Nicegram解锁会员
+
+[MITM]
+hostname = restore-access.indream.app
