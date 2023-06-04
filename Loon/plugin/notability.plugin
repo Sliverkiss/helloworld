@@ -1,0 +1,11 @@
+#!name=Unlock Notability Premium
+#!author=@R·E
+#!homepage=https://github.com/I-am-R-E/Functional-Store-Hub/tree/Master/Nicegram
+#!desc=解锁Nicegram会员(2022.07.15)
+#!icon=https://github.com/Sliverkiss/helloworld/raw/master/Loon/icon/Notability.png
+
+[Script]
+Notability = type=http-response,pattern=^https:\/\/notability\.com\/subscriptions$,requires-body=1,max-size=0,script-path=Notability.js
+
+[MITM]
+hostname=%APPEND% notability.com
