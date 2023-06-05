@@ -1,0 +1,13 @@
+#!name=海角社区
+#!author=@yuheng
+#!homepage=https://github.com/Yuheng0101
+#!desc=全解锁(2023.05.06)
+#!icon=https://github.com/Sliverkiss/helloworld/raw/master/Loon/icon/haijiao.png
+
+[Script]
+
+http-response (?i)^https:\/\/([a-zA-Z0-9]+\.haijiao\.com|hj[a-zA-Z0-9]+\.com)\/api\/topic\/(\d+)$ script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/haijiao.js, requires-body=true, timeout=60 ,tag=haijiao_10
+
+[MITM]
+
+hostname = hj*.com,*.haijiao.com
