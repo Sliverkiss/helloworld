@@ -1,9 +1,12 @@
 /*
  * @Author: Sliverkiss
  * @Date: 2023-05-16 18:30:27
- * @FilePath: https://github.com/Sliverkiss/helloworld/Study/michelin.js
+ * @homepage: https://github.com/Sliverkiss
+ * 
+ * 2023-06-08 修复评论转发任务bug
+ *
  * @Description:
- * 微信小程序 米其林会员俱乐部v1.0.3 每周积分任务
+ * 微信小程序 米其林会员俱乐部v1.0.4 每周积分任务
  * 捉ulp.michelin.com.cn域名任意包下的Authorization,填写到michelin_data中，多账号用#号连接
  * 
  * 只用过loon，理论上支持qx、surge，请自行尝试
@@ -250,25 +253,29 @@ async function paperScore(user) {
 async function pointsToast(user) {
     for (let i = 1; i <= 10; i++) {
         $.log(`正在执行第${i}次转发...`)
-        toast(user);
+        share(user);
         //每次转发之间等1~5秒随机时间
         let rnd_time = Math.floor(Math.random() * 4000) + 1000;
         await $.wait(rnd_time);
     }
-    message+=`\n🟢帐号[${user.index}]转发任务执行成功！`
+    message+=`\n🟢帐号[${user.index}]转发任务执行成功！获得10积分`
 }
 
-//转发接口
-async function toast(user) {
+async function share(user) {
     return new Promise((resolve) => {
         const header = {
             Authorization: user.authorization,
         };
+        const params={
+            type: "ARTICLE",
+            code: "COM-TXS-38"
+        }
         const signinRequest = {
-            url: `https://ulp.michelin.com.cn/membership/member/points/toast`,
+            url: `https://ulp.michelin.com.cn/op/points/share/have`,
             headers: header,
+            body: params
         };
-        $.get(signinRequest, (error, response, data) => {
+        $.post(signinRequest, (error, response, data) => {
             try {
                 var body = response.body;
                 var result = JSON.parse(body);
