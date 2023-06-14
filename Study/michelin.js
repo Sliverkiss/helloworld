@@ -85,8 +85,8 @@ async function userTask(user) {
     await paperScore(user);
     //评论/转发任务
     await pointsToast(user);
-	//寻找米其林先生任务
-	await luckyDrawTask(user);
+    //寻找米其林先生任务
+    await luckyDrawTask(user);
     //查询用户积分余额
     await getPoints(user);
 
