@@ -265,6 +265,7 @@ async function share(user) {
     return new Promise((resolve) => {
         const header = {
             Authorization: user.authorization,
+            "content-type": "application/json"
         };
         const params={
             type: "ARTICLE",
