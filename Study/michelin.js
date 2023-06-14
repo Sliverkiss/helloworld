@@ -3,17 +3,18 @@
  * @Date: 2023-05-16 18:30:27
  * @homepage: https://github.com/Sliverkiss
  * 
- * 2023-06-08 修复评论转发任务bug
+ * 2023-06-08 修复评论转发任务bug 
+ * 2023-06-14 增加寻找米其林先生任务、查询积分余额，优化通知排版
  *
  * @Description:
- * 微信小程序 米其林会员俱乐部v1.0.4 每周积分任务
+ * 微信小程序 米其林会员俱乐部 v2.0.1 每月能跑积分1500+ 积分兑换实物
  * 捉ulp.michelin.com.cn域名任意包下的Authorization,填写到michelin_data中，多账号用#号连接
  * 
- * 只用过loon，理论上支持qx、surge，请自行尝试
+ * 只用过loon，理论上支持qx、surge，请自行尝试,不支持青龙
  * 重写：打开微信小程序,点击探索+获取
  * [Script]
- * cron "0 15 13 * * 1" script-path=https://raw.githubsercontent.com/Sliverkiss/helloworld/main/Study/michelin.js, timeout=300, tag=米其林会员俱乐部
- * http-request ^https?:\/\/ulp\.michelin\.com\.cn\/op\/.+ script-path=https://raw.githubsercontent.com/Sliverkiss/helloworld/main/Study/michelin.cookie.js, timeout=10, tag=米其林俱乐部token
+ * cron "0 15 13 * * 1" script-path=https://raw.githubsercontent.com/Sliverkiss/helloworld/master/Study/michelin.js, timeout=300, tag=米其林会员俱乐部
+ * http-request ^https?:\/\/ulp\.michelin\.com\.cn\/op\/.+ script-path=https://raw.githubsercontent.com/Sliverkiss/helloworld/master/Study/michelin.cookie.js, timeout=10, tag=米其林俱乐部token
  *
  * [Mitm]
  *  hostname=ulp.michelin.com.cn 
@@ -74,16 +75,20 @@ async function main() {
 
 async function userTask(user) {
     //任务逻辑都放这里了, 与脚本入口分开, 方便分类控制并模块化
-    console.log(`\n============= 账号[${user.index}]开始任务 =============`)
-    message += `\n============= 账号[${user.index}]开始任务 =============`;
+    console.log(`\n========= 账号[${user.index}]信息 =========`)
+    message += `\n========= 账号[${user.index}]信息 =========`;
     //获取本期问卷
     await getPaper(user);
     //回答问卷题目
     await getOpenTpaper(user);
     //提交调查问卷
     await paperScore(user);
-    //转发任务
+    //评论/转发任务
     await pointsToast(user);
+	//寻找米其林先生任务
+	await luckyDrawTask(user);
+    //查询用户积分余额
+    await getPoints(user);
 
 }
 
@@ -237,9 +242,9 @@ async function paperScore(user) {
                 var body = response.body;
                 var result = JSON.parse(body);
                 if (result?.code == 200) {
-                    message += `\n🟢帐号[${user.index}]问卷第${$.npsPaperCode}期提交成功！获得${result?.data?.score}积分,排名${result?.data?.rank}`;
+                    message += `\n【答题任务】：获得${result?.data?.score}积分,排名${result?.data?.rank}`;
                 } else {
-                    message += `\n🔴帐号[${user.index}]问卷第${$.npsPaperCode}期提交失败！${result?.message}`
+                    message += `\n【答题状态】：${result?.message}`
                 }
             } catch (e) {
                 console.log(e);
@@ -250,6 +255,7 @@ async function paperScore(user) {
     });
 }
 
+//重复转发10次
 async function pointsToast(user) {
     for (let i = 1; i <= 10; i++) {
         $.log(`正在执行第${i}次转发...`)
@@ -258,9 +264,10 @@ async function pointsToast(user) {
         let rnd_time = Math.floor(Math.random() * 4000) + 1000;
         await $.wait(rnd_time);
     }
-    message+=`\n🟢帐号[${user.index}]转发任务执行成功！获得10积分`
+    message+=`\n【评论/转发任务】：详情请查看日志`
 }
 
+//分享转发任务接口
 async function share(user) {
     return new Promise((resolve) => {
         const header = {
@@ -287,6 +294,74 @@ async function share(user) {
                 }
             } catch (e) {
                 console.log(e);
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+//重复20次
+async function luckyDrawTask(user) {
+    for (let i = 1; i <= 20; i++) {
+        $.log(`正在执行第${i}次扫码...`)
+        luckyDraw(user);
+        //每次转发之间等1~5秒随机时间
+        let rnd_time = Math.floor(Math.random() * 4000) + 1000;
+        await $.wait(rnd_time);
+    }
+    message+=`\n【寻找米其林】：详情请查看日志`
+}
+
+//寻找米其林任务接口
+async function luckyDraw(user) {
+    return new Promise((resolve) => {
+        const header = {
+            Authorization: user.authorization
+        };
+        const signinRequest = {
+            url: `https://ulp.michelin.com.cn/campaign/stage/luckydraw/BIB_2022`,
+            headers: header,
+        };
+        $.get(signinRequest, (error, response, data) => {
+            try {
+                var body = response.body;
+                var result = JSON.parse(body);
+                if (result?.code == 200) {
+                    $.log(`扫码成功！获得${result?.data?.name}`)
+                } else {
+                    message += `\n帐号[${user.index}]扫码失败！${result}`
+                }
+            } catch (error) {
+                $.log(error)
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+//查询用户积分接口
+async function getPoints(user) {
+    return new Promise((resolve) => {
+        const header = {
+            Authorization: user.authorization
+        };
+        const signinRequest = {
+            url: `https://ulp.michelin.com.cn/bff/profile`,
+            headers: header,
+        };
+        $.get(signinRequest, (error, response, data) => {
+            try {
+                var body = response.body;
+                var result = JSON.parse(body);
+                if (result?.code == 200) {
+                    message+=`\n【积分余额】：${result?.data?.points}`
+                } else {
+                    message += `\n【积分余额】：${result?.message}`
+                }
+            } catch (error) {
+                $.log(error)
             } finally {
                 resolve();
             }
