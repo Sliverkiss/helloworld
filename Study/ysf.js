@@ -1,20 +1,24 @@
 /*
  * @Author: Sliverkiss
  * @Date: 2023-05-22 22:11:56
- * @FilePath: https://github.com/Sliverkiss/helloworld/Study/ysf.js
+ * @homePage: https://github.com/Sliverkiss
+ * 
+ * 2023-06-15 添加自动收集积点、查询积点余额，优化通知面板，移除U车票小程序签到
+ * 
  * @Description:
  * 云闪付每日签到
- * 捉youhui.95516.com域名包下的Authorization,填写到ysf_cookie中，多账号换行
+ * 捉youhui.95516.com域名包下的Authorization,usrId和openId,用#号连接,填写到ysf_cookie中，多账号换行
+ * export ysf_cookie="authorization#usrId#openId"
  * 
  * 只用过loon，理论上支持qx、surge，请自行尝试
- * 
- */
+ * [Script]
+ * cron "0 20 9 * * *" script-path=https://raw.githubsercontent.com/Sliverkiss/helloworld/master/Study/ysf.js, timeout=300, tag=云闪付签到 
+*/
 
 const $ = new Env("云闪付");
 //环境变量名字
 const env_name = "ysf_cookie";
 const env = $.getdata(env_name);
-
 //通知相关
 var message = "";
 
@@ -46,11 +50,16 @@ async function main() {
     //循环遍历每个账号
     for (let ck of user_ck) {
         if (!ck) continue; //跳过空行
-        let cookie = ck;
+        let ck_info = ck.split('#');
+        let cookie = ck_info[0];
+        let usrId = ck_info[1];
+        let openId = ck_info[2];
         //用一个对象代表账号, 里面存放账号信息
         let user = {
             index: index,
-            cookie, //简写法, 效果等同于 openid: openid,
+            cookie,
+            usrId,
+            openId //简写法, 效果等同于 openid: openid,
         };
         index = index + 1; //每次用完序号+1
         //开始账号任务
@@ -65,9 +74,14 @@ async function main() {
 }
 
 async function userTask(user) {
-	 message += `\n*****账号[${user.index}]*****`;
+    message += `\n========= 账号[${user.index}]信息 =========`;
     //任务逻辑都放这里了, 与脚本入口分开, 方便分类控制并模块化
+    //积分签到
     await signin(user);
+    //自动收集积点
+    await getPointOnce(user);
+    //查询积点余额
+    await pointQry(user);
 }
 
 function signin(user) {
@@ -88,10 +102,9 @@ function signin(user) {
             try {
                 var result = JSON.parse(data);
                 if (result?.signedIn) {
-                    message += `\n🟢签到成功！已连续签到${result?.signInDays?.days}天`;
+                    message += `\n【积点签到】：成功！已连续签到${result?.signInDays?.days}天`;
                 } else {
-						console.log(data);
-                    message += `\n🟡签到失败！${result?.message}`
+                    message += `\n【积点签到】：失败！${result?.message}`
                 }
             } catch (error) {
                 message += `\n🔴${result?.message}`;
@@ -103,6 +116,107 @@ function signin(user) {
     });
 }
 
+//U车票小程序签到(cookie过期太快，以后有空再修)
+function uSignin(user) {
+    return new Promise((resolve) => {
+        const header = {
+            "Authorization": " Bearer eyJhbGciOiJIUzUxMiJ9.eyJvcGVuaWQiOiJlL2dUWmFVeFhTNGJGekdYUmZ5TGxKZWthU0ovK3ZVYnQwdWdxR2EyTGVrUkl5d3BwcE9MRjNycU9Vb0hBa2FJIiwibG9naW5fdXNlcl9rZXkiOiJkNjRkYzU0ZC0wMDQ5LTQwMzctYjZmZi1jNTFiZDllYTRlMWIifQ.9Qf728nOoyjkdK4P0r3VgAA-6R3jVVlKbBAJ_0is4duzYGJAI19XQgl3OQYoGBUICBr7v79dDDgifxGygAQ-tg"
+        };
+
+        const signinRequest = {
+            url: "https://bjchx.95516.com/uhcpmobile/interest/signinInfo/signin",
+            headers: header,
+        };
+        $.post(signinRequest, (error, response, data) => {
+            try {
+                var result = JSON.parse(data);
+                if (result?.code == 200) {
+                    message += `\n【U车票小程序】：${result?.data?.rightsLevelCode},距离${result?.data?.rightsLevelName}还需要${result?.data?.rightsLevelIexp}经验值`;
+                } else {
+                    console.log(data);
+                    message += `\n【U车票小程序】：${result?.msg}`
+                }
+            } catch (error) {
+                message += `\n🔴${result?.msg}`;
+                $.logErr(error)
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+//自动收积点
+function getPointOnce(user) {
+    return new Promise((resolve) => {
+        const header = {
+            "Content-Type": " application/json;charset=UTF-8",
+            Authorization: user.cookie
+        };
+        const params = {
+            "cmd": "3008",
+            "usrId": user.usrId,
+            "h5Flag": "01"
+        }
+        const signinRequest = {
+            url: "https://cloudvip.95516.com/payMember/getPointOnce",
+            headers: header,
+            body: params
+        };
+        $.post(signinRequest, (error, response, data) => {
+            try {
+                var result = JSON.parse(data);
+                if (result?.respMsg == "成功" && result?.data?.freshFlag == 0) {
+                    message += `\n【收集积点】：成功！获得${result?.data?.allPoint}积点`;
+                } else {
+                    console.log(data);
+                    message += `\n【收集积点】：失败！暂无积点可收集`
+                }
+            } catch (error) {
+                message += `\n🔴${result}`;
+                $.logErr(error)
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+//查询积点余额
+function pointQry(user) {
+    return new Promise((resolve) => {
+        const header = {
+            "Content-Type": " application/json;charset=UTF-8",
+            Authorization: user.cookie
+        };
+        const params = {
+            "cmd": "1001",
+            "usrId": user.usrId,
+            "openId": user.openId
+        }
+        const signinRequest = {
+            url: "https://cloudvip.95516.com/payMember/pointQry",
+            headers: header,
+            body: params
+        };
+        $.post(signinRequest, (error, response, data) => {
+            try {
+                var result = JSON.parse(data);
+                if (result?.respMsg == "成功") {
+                    message += `\n【积点余额】：${result?.data?.avlBalance}`;
+                } else {
+                    console.log(data);
+                    message += `\n【积点余额】：${result?.respMsg}`
+                }
+            } catch (error) {
+                message += `\n🔴${result?.message}`;
+                $.logErr(error)
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
 //获取cookie
 async function getCookie() {
     if ($request && $request.method != "OPTIONS" && $request.url.match(/\/daily_sign_in\//)) {
