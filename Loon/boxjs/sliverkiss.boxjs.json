@@ -2,7 +2,7 @@
   "id": "sliverkiss.sub",
   "name": "sliverkiss 脚本订阅",
   "author": "@sliverkiss",
-  "icon": "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/sliverkiss.png",
+  "icon": "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/sliverkiss.png",
   "repo": "https://github.com/Sliverkiss/helloworld",
   "apps": [
     {
@@ -64,8 +64,8 @@
       "author": "@JoJoJotarou",
       "repo": "https://github.com/JoJoJotarou/myScript",
       "icons": [
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/maicaimeituan.png",
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/maicaimeituan.png"
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/maicaimeituan.png",
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/maicaimeituan.png"
         ]
     },
     {
@@ -81,12 +81,12 @@
         "placeholder": "",
         "desc": ""
       }],
-      "script": "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/Scripts/fdshnc.js",
+      "script": "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/Scripts/fdshnc.js",
       "author": "@蛋炒饭",
       "repo": "https://github.com/Slicerkiss/helloworld",
       "icons": [
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/fudaishenghuo.jpg",
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/fudaishenghuo.jpg"
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/fudaishenghuo.jpg",
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/fudaishenghuo.jpg"
         ]
     },
     {
@@ -106,8 +106,8 @@
       "author": "@smallfawn",
       "repo": "https://github.com/smallfawn/QLScriptPublic",
       "icons": [
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/yueyequan.png",
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/yueyequan.png"
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/yueyequan.png",
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/yueyequan.png"
         ]
     },
     {
@@ -127,8 +127,8 @@
       "author": "@smallfawn",
       "repo": "https://github.com/smallfawn/QLScriptPublic",
       "icons": [
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/qingtanxing.png",
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/qingtanxing.png"
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/qingtanxing.png",
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/qingtanxing.png"
         ]
     },
     {
@@ -158,8 +158,8 @@
       "author": "@leafxcy",
       "repo": "https://github.com/leafxcy/JavaScript/",
       "icons": [
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/kangshifu.png",
-        "https://raw.githubusercontent.com/Sliverkiss/helloworld/main/Loon/icon/kangshifu.png"
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/kangshifu.png",
+        "https://raw.githubusercontent.com/Sliverkiss/helloworld/master/Loon/icon/kangshifu.png"
         ]
     },
     {
